@@ -27,6 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import com.example.mdi2_113_wearfitness.data.FirebaseRepository
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.SupportingPaneScaffold
+import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(
@@ -43,6 +47,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun PhoneCompanionApp(repository: FirebaseRepository) {
     val context = LocalContext.current
@@ -78,144 +83,170 @@ fun PhoneCompanionApp(repository: FirebaseRepository) {
         onDispose { listenerRegistration.remove() }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement =
-            Arrangement.Center,
-        horizontalAlignment =
-            Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Wear Fitness",
-            style =
-                MaterialTheme.typography.headlineMedium
-        )
+    val navigator = rememberSupportingPaneScaffoldNavigator()
 
-        Spacer(
-            modifier = Modifier.height(24.dp)
-        )
+    SupportingPaneScaffold(
+        directive = navigator.scaffoldDirective,
+        value = navigator.scaffoldValue,
+        mainPane = {
+            AnimatedPane() {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Wear Fitness",
+                        style =
+                            MaterialTheme.typography.headlineMedium
+                    )
 
-        Text(
-            text = "Steps Goal",
-            style =
-                MaterialTheme.typography.titleMedium
-        )
+                    Spacer(
+                        modifier = Modifier.height(24.dp)
+                    )
 
-        Spacer(
-            modifier = Modifier.height(12.dp)
-        )
+                    Text(
+                        text = "Steps Goal",
+                        style =
+                            MaterialTheme.typography.titleMedium
+                    )
 
-        Row(
-            verticalAlignment =
-                Alignment.CenterVertically,
-            horizontalArrangement =
-                Arrangement.Center
-        ) {
-            Button(
-                onClick = {
-                    if (stepsGoal > 500) {
-                        stepsGoal -= 500
+                    Spacer(
+                        modifier = Modifier.height(12.dp)
+                    )
+
+                    Row(
+                        verticalAlignment =
+                            Alignment.CenterVertically,
+                        horizontalArrangement =
+                            Arrangement.Center
+                    ) {
+                        Button(
+                            onClick = {
+                                if (stepsGoal > 500) {
+                                    stepsGoal -= 500
+                                }
+                            }
+                        ) {
+                            Text("-")
+                        }
+
+                        Spacer(
+                            modifier = Modifier.width(16.dp)
+                        )
+
+                        Text(
+                            text = stepsGoal.toString(),
+                            style =
+                                MaterialTheme.typography.headlineSmall
+                        )
+
+                        Spacer(
+                            modifier = Modifier.width(16.dp)
+                        )
+
+                        Button(
+                            onClick = {
+                                stepsGoal += 500
+                            }
+                        ) {
+                            Text("+")
+                        }
                     }
+
+                    Spacer(
+                        modifier = Modifier.height(24.dp)
+                    )
+
+                    Text(
+                        text = "Steps Today",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = steps.toString(),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = "Heart Rate",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = "$heartRate BPM",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
                 }
-            ) {
-                Text("-")
             }
+        },
+        supportingPane = {
+            AnimatedPane() {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Actions",
+                        style =
+                            MaterialTheme.typography.headlineMedium
+                    )
 
-            Spacer(
-                modifier = Modifier.width(16.dp)
-            )
+                    Button(
+                        onClick = {
+                            sendStatus = "Sending..."
 
-            Text(
-                text = stepsGoal.toString(),
-                style =
-                    MaterialTheme.typography.headlineSmall
-            )
-
-            Spacer(
-                modifier = Modifier.width(16.dp)
-            )
-
-            Button(
-                onClick = {
-                    stepsGoal += 500
-                }
-            ) {
-                Text("+")
-            }
-        }
-
-        Spacer(
-            modifier = Modifier.height(24.dp)
-        )
-
-        Text(
-            text = "Steps Today",
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(
-            text = steps.toString(),
-            style = MaterialTheme.typography.headlineSmall
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "Heart Rate",
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(
-            text = "$heartRate BPM",
-            style = MaterialTheme.typography.headlineSmall
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                sendStatus = "Sending..."
-
-                sendStepsGoalToWatch(
-                    context = context,
-                    stepsGoal = stepsGoal,
-                    onSuccess = {
-                        sendStatus = "Sent to watch!"
-                    },
-                    onError = { error ->
-                        sendStatus = "Error: $error"
+                            sendStepsGoalToWatch(
+                                context = context,
+                                stepsGoal = stepsGoal,
+                                onSuccess = {
+                                    sendStatus = "Sent to watch!"
+                                },
+                                onError = { error ->
+                                    sendStatus = "Error: $error"
+                                }
+                            )
+                        }
+                    ) {
+                        Text("Send to Watch")
                     }
-                )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Button(
+                        onClick = {
+                            sendStatus = "Saving to Firebase..."
+                            repository.updateDailyGoal(
+                                dailyGoal = stepsGoal.toLong(),
+                                onSuccess = { sendStatus = "Saved $stepsGoal in Firebase" },
+                                onError = { exception ->
+                                    sendStatus =
+                                        "Firebase Error: " + (exception.message ?: "Unknown error")
+                                }
+                            )
+                        }
+                    ) {
+                        Text("Save to Firebase")
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "Status: $sendStatus"
+                    )
+                }
             }
-        ) {
-            Text("Send to Watch")
         }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Button(
-            onClick = {
-                sendStatus = "Saving to Firebase..."
-                repository.updateDailyGoal(
-                    dailyGoal = stepsGoal.toLong(),
-                    onSuccess = { sendStatus = "Saved $stepsGoal in Firebase" },
-                    onError = { exception ->  sendStatus = "Firebase Error: " + (exception.message ?: "Unknown error") }
-                )
-            }
-        ) {
-            Text("Save to Firebase")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "Status: $sendStatus"
-        )
-    }
+    )
 }

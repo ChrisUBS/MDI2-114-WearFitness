@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.mdi2_113_wearfitness" />
+                  <option name="mobileSdkAppId" value="1:368044814187:android:d105d3d60434b8a3e5262e" />
+                  <option name="projectId" value="mdi2-113-wearfitness-2c2da" />
+                  <option name="projectNumber" value="368044814187" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

@@ -62,4 +62,5 @@ dependencies {
     implementation(project(":shared"))
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation("androidx.compose.material3.adaptive:adaptive")
 }

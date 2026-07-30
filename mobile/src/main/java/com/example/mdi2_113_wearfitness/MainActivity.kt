@@ -29,7 +29,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.example.mdi2_113_wearfitness.data.FirebaseRepository
-
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isAltPressed
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.focusable
 
 class MainActivity : ComponentActivity() {
 
@@ -433,11 +444,43 @@ fun TabletLayout(
     onSendToWatch: () -> Unit,
     onSaveFirebase: () -> Unit
 ) {
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
 
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .padding(32.dp),
+            .padding(32.dp)
+            .focusRequester(focusRequester)
+            .focusable()
+            .onPreviewKeyEvent { keyEvent ->
+                if (keyEvent.type == KeyEventType.KeyDown && keyEvent.isCtrlPressed) {
+                    when (keyEvent.key) {
+                        Key.Equals, Key.Plus -> {
+                            onIncreaseGoal()
+                            true
+                        }
+                        Key.Minus -> {
+                            onDecreaseGoal()
+                            true
+                        }
+                        Key.W -> {
+                            onSendToWatch()
+                            true
+                        }
+                        Key.F -> {
+                            onSaveFirebase()
+                            true
+                        }
+                        else -> false
+                    }
+                } else {
+                    false
+                }
+            },
 
         verticalAlignment =
             Alignment.CenterVertically
@@ -478,6 +521,12 @@ fun TabletLayout(
                     MaterialTheme.typography.titleMedium
             )
 
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Tip: Ctrl + Minus/Plus to adjust with keyboard",
+                style = MaterialTheme.typography.labelSmall
+            )
 
             Spacer(
                 modifier = Modifier.height(16.dp)
@@ -597,6 +646,14 @@ fun TabletLayout(
                 modifier = Modifier.height(32.dp)
             )
 
+            Text(
+                text = "Tip: Ctrl + W/F to send to watch/save to Firebase",
+                style = MaterialTheme.typography.labelSmall
+            )
+
+            Spacer(
+                modifier = Modifier.height(32.dp)
+            )
 
             // -----------------------------
             // SEND TO WATCH
